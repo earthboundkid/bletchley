@@ -56,10 +56,7 @@ func (config *Config) Exec() error {
 		err error
 	)
 	if config.KeySource == "" {
-		prv, err = betchley.GenerateRSAKeyPair(config.BitSize)
-		if err != nil {
-			return err
-		}
+		prv = betchley.NewRSAPrivateKey(config.BitSize)
 		if config.PrivateDest == "" || config.PrivateDest == "-" {
 			err = betchley.EncodePrivateKeyPEM(os.Stdout, prv)
 		} else {
@@ -81,8 +78,5 @@ func (config *Config) Exec() error {
 	} else {
 		err = betchley.SavePublicKeyPEM(config.PrivateDest, pub)
 	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
