@@ -218,3 +218,33 @@ func EncodeMessagePEM(w io.Writer, plaintext []byte, pub *rsa.PublicKey) error {
 		Bytes: ciphertext,
 	})
 }
+
+func DecodeMessage(key, ciphertext []byte, prv *rsa.PrivateKey) ([]byte, error) {
+	otp, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, prv, key, nil)
+	if err != nil {
+		return nil, fmt.Errorf("could not decode BETCHLEY KEY: %v", err)
+	}
+	if len(otp) != 32 {
+		return nil, fmt.Errorf("bad OTP length: %d", len(otp))
+	}
+	otpb := [32]byte{}
+	copy(otpb[:], otp)
+	return Decrypt(ciphertext, &otpb)
+}
+
+func DecodeMessagePEM(w io.Writer, cipherpems []byte, prv *rsa.PrivateKey) error {
+	key, err := DecodePEMType(cipherpems, "BETCHLEY KEY")
+	if err != nil {
+		return err
+	}
+	ciphertext, err := DecodePEMType(cipherpems, "BETCHLEY CIPHERTEXT")
+	if err != nil {
+		return err
+	}
+	messagetext, err := DecodeMessage(key, ciphertext, prv)
+	if err != nil {
+		return err
+	}
+	_, err = w.Write(messagetext)
+	return err
+}

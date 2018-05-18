@@ -76,7 +76,7 @@ func (config *Config) Exec() error {
 	if config.PublicDest == "" || config.PublicDest == "-" {
 		err = betchley.EncodePublicKeyPEM(os.Stdout, pub)
 	} else {
-		err = betchley.SavePublicKeyPEM(config.PrivateDest, pub)
+		err = betchley.SavePublicKeyPEM(config.PublicDest, pub)
 	}
 	return err
 }
