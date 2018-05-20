@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/carlmjohnson/betchley"
+	"github.com/carlmjohnson/bletchley"
 )
 
 func main() {
@@ -26,17 +26,17 @@ type Config struct {
 
 func FromArgs(args []string) *Config {
 	conf := &Config{}
-	fl := flag.NewFlagSet("betchley-encode", flag.ExitOnError)
+	fl := flag.NewFlagSet("bletchley-encode", flag.ExitOnError)
 	fl.StringVar(&conf.KeySource, "key-src", "public.pem", "public key to encode message with")
 	fl.StringVar(&conf.MessageSource, "msg-src", "-", "file to encrypt")
 	fl.StringVar(&conf.CipherDest, "cipher-dest", "cipher.pem", "file to save encrypted ciphertext into")
 	fl.Usage = func() {
 		fmt.Fprintf(os.Stderr,
-			`betchley-encode generates a one time use password and encodes it with a public
+			`bletchley-encode generates a one time use password and encodes it with a public
 RSA key so that only the possessor of the private key can decode it, then
 encodes the message with the one time use password.
 
-Usage of betchley-encode:
+Usage of bletchley-encode:
 
 `,
 		)
@@ -54,9 +54,9 @@ func (config *Config) Exec() error {
 	)
 	if config.KeySource == "" || config.KeySource == "-" {
 		stdin, _ := ioutil.ReadAll(os.Stdin)
-		pub, err = betchley.DecodePublicKeyPEM(stdin)
+		pub, err = bletchley.DecodePublicKeyPEM(stdin)
 	} else {
-		pub, err = betchley.ReadPublicKeyPEM(config.KeySource)
+		pub, err = bletchley.ReadPublicKeyPEM(config.KeySource)
 	}
 	if err != nil {
 		return err
@@ -80,5 +80,5 @@ func (config *Config) Exec() error {
 		defer f.Close()
 	}
 
-	return betchley.EncodeMessagePEM(f, plaintext, pub)
+	return bletchley.EncodeMessagePEM(f, plaintext, pub)
 }

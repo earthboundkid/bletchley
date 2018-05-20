@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/carlmjohnson/betchley"
+	"github.com/carlmjohnson/bletchley"
 )
 
 func main() {
@@ -26,15 +26,15 @@ type Config struct {
 
 func FromArgs(args []string) *Config {
 	conf := &Config{}
-	fl := flag.NewFlagSet("betchley-decode", flag.ExitOnError)
+	fl := flag.NewFlagSet("bletchley-decode", flag.ExitOnError)
 	fl.StringVar(&conf.KeySource, "key-src", "private.pem", "private key to decode cipher with")
 	fl.StringVar(&conf.CipherSource, "cipher-src", "cipher.pem", "file to decrypt")
 	fl.StringVar(&conf.MessageDest, "msg-dest", "-", "file to save decrypted message into")
 	fl.Usage = func() {
 		fmt.Fprintf(os.Stderr,
-			`betchley-decode decodes a betchley cipher PEM file.
+			`bletchley-decode decodes a bletchley cipher PEM file.
 
-Usage of betchley-decode:
+Usage of bletchley-decode:
 
 `,
 		)
@@ -52,9 +52,9 @@ func (config *Config) Exec() error {
 	)
 	if config.KeySource == "" || config.KeySource == "-" {
 		stdin, _ := ioutil.ReadAll(os.Stdin)
-		prv, err = betchley.DecodePrivateKeyPEM(stdin)
+		prv, err = bletchley.DecodePrivateKeyPEM(stdin)
 	} else {
-		prv, err = betchley.ReadPrivateKeyPEM(config.KeySource)
+		prv, err = bletchley.ReadPrivateKeyPEM(config.KeySource)
 	}
 	if err != nil {
 		return err
@@ -73,5 +73,5 @@ func (config *Config) Exec() error {
 			return fmt.Errorf("could not create %q: %v", config.MessageDest, err)
 		}
 	}
-	return betchley.DecodeMessagePEM(f, cipherpems, prv)
+	return bletchley.DecodeMessagePEM(f, cipherpems, prv)
 }

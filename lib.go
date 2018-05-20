@@ -1,4 +1,4 @@
-package betchley
+package bletchley
 
 import (
 	"crypto/aes"
@@ -207,14 +207,14 @@ func EncodeMessagePEM(w io.Writer, plaintext []byte, pub *rsa.PublicKey) error {
 		return err
 	}
 	err = pem.Encode(w, &pem.Block{
-		Type:  "BETCHLEY KEY",
+		Type:  "bletchley KEY",
 		Bytes: key,
 	})
 	if err != nil {
 		return err
 	}
 	return pem.Encode(w, &pem.Block{
-		Type:  "BETCHLEY CIPHERTEXT",
+		Type:  "bletchley CIPHERTEXT",
 		Bytes: ciphertext,
 	})
 }
@@ -222,7 +222,7 @@ func EncodeMessagePEM(w io.Writer, plaintext []byte, pub *rsa.PublicKey) error {
 func DecodeMessage(key, ciphertext []byte, prv *rsa.PrivateKey) ([]byte, error) {
 	otp, err := rsa.DecryptOAEP(sha256.New(), rand.Reader, prv, key, nil)
 	if err != nil {
-		return nil, fmt.Errorf("could not decode BETCHLEY KEY: %v", err)
+		return nil, fmt.Errorf("could not decode bletchley KEY: %v", err)
 	}
 	if len(otp) != 32 {
 		return nil, fmt.Errorf("bad OTP length: %d", len(otp))
@@ -233,11 +233,11 @@ func DecodeMessage(key, ciphertext []byte, prv *rsa.PrivateKey) ([]byte, error) 
 }
 
 func DecodeMessagePEM(w io.Writer, cipherpems []byte, prv *rsa.PrivateKey) error {
-	key, err := DecodePEMType(cipherpems, "BETCHLEY KEY")
+	key, err := DecodePEMType(cipherpems, "bletchley KEY")
 	if err != nil {
 		return err
 	}
-	ciphertext, err := DecodePEMType(cipherpems, "BETCHLEY CIPHERTEXT")
+	ciphertext, err := DecodePEMType(cipherpems, "bletchley CIPHERTEXT")
 	if err != nil {
 		return err
 	}
