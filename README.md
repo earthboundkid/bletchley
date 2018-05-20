@@ -12,6 +12,16 @@ If you just want to install the binary to your current directory and don't care 
 GOBIN="$(pwd)" GOPATH="$(mktemp -d)" go get github.com/carlmjohnson/bletchley/...
 ```
 
+## Usage
+
+Suppose **Alice** has a file of secret information that she wants to share with her coworker, **Bob**. They regularly communicate, so authentication is not an issue. The issue is that Alice does not want her secrets to be in some email attachment, Slack history, or S3 bucket for an indefinite period of time, and she doesn't necessarily trust the network not to eavesdrop on her file exchange. Alice and Bob agree to exchange the file using **bletchley**.
+
+- Alice asks Bob to run `bletchley-create` to create a public/private key pair for himself.
+- Bob sends Alice his `public.pem` file through their normal communication channel. She saves it as `bob.pem`.
+- Alice runs `bletchley-encode -key-src bob.pem -msg-src secrets.txt -cipher-dest secrets.pem`.
+- Alice sends Bob her `secrets.pem` file through their normal communication channel.
+- Bob runs `bletchley-decode -key-src private.pem -cipher-src secrets.pem -msg-dst secrets.txt`.
+- Alice and Bob go back to work.
 
 ## Screenshots
 ```bash
