@@ -1,16 +1,5 @@
-# bletchley
-Simple command line application for basic public key crypto
-
-
-## Installation
-
-First install [Go](http://golang.org).
-
-If you just want to install the binary to your current directory and don't care about the source code, run
-
-```bash
-GOBIN="$(pwd)" GOPATH="$(mktemp -d)" go get github.com/carlmjohnson/bletchley/...
-```
+# bletchley [![GoDoc](https://godoc.org/github.com/carlmjohnson/bletchley?status.svg)](https://godoc.org/github.com/carlmjohnson/bletchley)
+Bletchley is a simple command line application for basic public key based file exchange.
 
 ## Usage
 
@@ -22,6 +11,16 @@ Suppose **Alice** has a file of secret information that she wants to share with 
 - Alice sends Bob her `secrets.pem` file through their normal communication channel.
 - Bob runs `bletchley-decode -key-src private.pem -cipher-src secrets.pem -msg-dst secrets.txt`.
 - Alice and Bob go back to work.
+
+## Installation
+
+First install [Go](http://golang.org).
+
+If you just want to install the binary to your current directory and don't care about the source code, run
+
+```bash
+GOBIN="$(pwd)" GOPATH="$(mktemp -d)" go get github.com/carlmjohnson/bletchley/...
+```
 
 ## Screenshots
 ```bash
@@ -67,4 +66,19 @@ Usage of bletchley-decode:
         private key to decode cipher with (default "private.pem")
   -msg-dest string
         file to save decrypted message into (default "-")
+        
+Bob $ bletchley-create -private-dest private.pem -public-dest public.pem
+
+... Bob sends public.pem ...
+
+Alice $ bletchley-encode -key-src public.pem -msg-src <(echo 'Hello, World!') -cipher-dest cipher.txt
+
+... Alice sends cipher.txt ...
+
+Bob $ bletchley-decode -key-src private.pem -cipher-src cipher.txt
+Hello, World!
 ```
+
+## Acknowledgements
+
+Bletchley is based on code from [github.com/gtank/cryptopasta/](https://github.com/gtank/cryptopasta/blob/master/encrypt.go).
